@@ -1,22 +1,7 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useEffect, useState } from "react";
-import Image from 'next/image'
-import Peterpic from './Peter_Griffin.png'
-import { useRouter } from "next/navigation";
-import { useAuthState } from "react-firebase-hooks/auth"
+"use client"
 import Link from "next/link"
 import { CircleUser, Menu, Package2, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,11 +10,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/app/config/firebase-config";
 
 const Navbar = () => {
-    
+    const [user, loading, error] = useAuthState(auth);
+
     return (
         <div>
             <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -45,7 +31,7 @@ const Navbar = () => {
                 href="/"
                 className="text-muted-foreground transition-colors hover:text-foreground"
                 >
-                Dashboard
+                Home
                 </Link>
                 <Link
                 href="/collection"
@@ -53,12 +39,14 @@ const Navbar = () => {
                 >
                 Collection
                 </Link>
-                <Link
-                href="/login"
-                className="text-muted-foreground transition-colors hover:text-foreground"
-                >
-                Login
-                </Link>
+                {!user ? (
+                    <Link
+                    href="/login"
+                    className="text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                    Login
+                    </Link>
+                ) : null}
             </nav>
             <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
                 <form className="ml-auto flex-1 sm:flex-initial">
