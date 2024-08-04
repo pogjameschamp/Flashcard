@@ -7,6 +7,16 @@ import { auth } from "../config/firebase-config";
 import useWordsStore from "../stores/wordStore";
 import Image from 'next/image';
 import peter from '../Peter_Griffin.png';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Check } from "lucide-react"
 
 export default function Collection() {
   const [topic, setTopic] = useState('');
@@ -38,13 +48,23 @@ export default function Collection() {
   };
 
   return (
-    <div className="flex flex-col">
-      <h1>Your Topics:</h1>
-      <ul>
+    <div className="container mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-4">Your Topics:</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {topics.map((topic) => (
-          <li key={topic.id}>{topic.name}</li>
+          <Card key={topic.id} className="w-full">
+            <CardHeader>
+              <CardTitle>{topic.name}</CardTitle>
+              <CardDescription>Description for {topic.name}</CardDescription>
+            </CardHeader>
+            <CardFooter>
+              <Button className="w-full">
+                <Check className="mr-2 h-4 w-4" /> Go to Topic
+              </Button>
+            </CardFooter>
+          </Card>
         ))}
-      </ul>
+      </div>
       <div className="flex justify-center p-6">
         <form className="border border-gray-300 p-4" onSubmit={submitTopic}>
           <input
@@ -61,8 +81,12 @@ export default function Collection() {
           </button>
         </form>
       </div>
-      <Image src={peter} alt="peter" />
-      <p>w gooning w jizz</p>
+      <div className="flex justify-center mt-6">
+        <Image src={peter} alt="peter" className="rounded-full"/>
+      </div>
+      <div className="flex justify-center mt-2">
+        <p>w gooning w jizz</p>
+      </div>
     </div>
   );
 }
