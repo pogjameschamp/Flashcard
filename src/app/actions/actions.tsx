@@ -33,10 +33,11 @@ export const fetchTopics = async (userId: string): Promise<Topic[]> => {
   return topics;
 }
 
-async function fetchWords(userId: string, topicId: string) {
+export async function fetchWords(userId: string, topicId: string) {
   const wordsRef = collection(db, `users/${userId}/topics/${topicId}/words`);
   const querySnapshot = await getDocs(wordsRef);
   const words = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   console.log("Fetched words: ", words);
   return words;
 }
+

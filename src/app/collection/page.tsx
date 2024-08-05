@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link'
 import { addTopic } from "../actions/actions";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -24,7 +25,7 @@ export default function Collection() {
   const { topics, fetchTopics, setTopicsFromStorage } = useWordsStore();
 
   useEffect(() => {
-    setTopicsFromStorage(); // Set topics from session storage on component mount
+    setTopicsFromStorage(); 
   }, [setTopicsFromStorage]);
 
   useEffect(() => {
@@ -41,11 +42,11 @@ export default function Collection() {
     if (user?.uid) {
       await addTopic(user.uid, topic);
       console.log(user.uid);
-      // Fetch the updated list of topics after adding a new one
       await fetchTopics(user.uid);
-      setTopic(''); // Clear the input field
+      setTopic(''); 
     }
   };
+
 
   return (
     <div className="container mx-auto p-6">
@@ -57,11 +58,13 @@ export default function Collection() {
               <CardTitle>{topic.name}</CardTitle>
               <CardDescription>Description for {topic.name}</CardDescription>
             </CardHeader>
-            <CardFooter>
-              <Button className="w-full">
-                <Check className="mr-2 h-4 w-4" /> Go to Topic
-              </Button>
-            </CardFooter>
+                <CardFooter>
+                <Link href={`/collection/${topic.id}`}>
+                    <Button className="w-full">
+                    <Check className="mr-2 h-4 w-4" /> Go to Topic
+                    </Button>
+                </Link>
+                </CardFooter>
           </Card>
         ))}
       </div>
