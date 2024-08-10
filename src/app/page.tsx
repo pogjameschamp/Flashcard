@@ -12,8 +12,9 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
-      <h1>Your words:</h1>
+    <div className="flex flex-row h-screen m-8">
+      <div className="basis-1/2 border border-gray-300 p-4">01</div>
+      <div className="basis-1/2 border border-gray-300 p-4">02</div>
 
     </div>
   );

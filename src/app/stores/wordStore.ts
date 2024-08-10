@@ -1,6 +1,6 @@
-import { create } from 'zustand';
+import create from 'zustand';
 import { db } from '../config/firebase-config';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, query, getDocs } from 'firebase/firestore';
 
 interface Topic {
   id: string;
@@ -9,13 +9,13 @@ interface Topic {
 
 interface WordsState {
   topics: Topic[];
-  fetchTopics: (userId: string) => Promise<void>;
+  fetchTopics: (userId: string) => Promise<Topic[]>;
   setTopicsFromStorage: () => void;
+  
 }
 
 const useWordsStore = create<WordsState>((set) => ({
   topics: [],
-
   fetchTopics: async (userId: string) => {
     const topicsRef = collection(db, `users/${userId}/topics`);
     const querySnapshot = await getDocs(topicsRef);
@@ -27,12 +27,12 @@ const useWordsStore = create<WordsState>((set) => ({
     if (typeof window !== 'undefined') {
       sessionStorage.setItem("topics", JSON.stringify(topicsList));
     }
+    return topicsList;
   },
-
   setTopicsFromStorage: () => {
     if (typeof window !== 'undefined') {
-      const storedTopics = JSON.parse(sessionStorage.getItem("topics") || "[]");
-      set({ topics: storedTopics });
+      const topics = JSON.parse(sessionStorage.getItem("topics") || "[]");
+      set({ topics });
     }
   }
 }));
