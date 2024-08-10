@@ -1,16 +1,12 @@
 // actions.ts
 import { db } from '../config/firebase-config';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
-export const addTopic = async (userId: string, topicName: string) => {
-  try {
-    const topicsRef = collection(db, `users/${userId}/topics`);
-    const docRef = await addDoc(topicsRef, { name: topicName });
-    console.log("Topic added with ID: ", docRef.id);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
-};
+export async function addTopic(userId: string, topicName: string, description: string) {
+  const topicsCollection = collection(db, `users/${userId}/topics`);
+  await addDoc(topicsCollection, { name: topicName, description });
+}
+
 
 export async function addWord(userId: string, topicId: string, word: string, meaning: string) {
   const wordsRef = collection(db, `users/${userId}/topics/${topicId}/words`);
@@ -23,12 +19,12 @@ interface Topic {
   name: string;
 }
 
-export const fetchTopics = async (userId: string): Promise<Topic[]> => {
-  const topicsRef = collection(db, `users/${userId}/topics`);
-  const querySnapshot = await getDocs(topicsRef);
+export async function fetchTopics(userId: string) {
+  const topicsCollection = collection(db, `users/${userId}/topics`);
+  const querySnapshot = await getDocs(topicsCollection);
   const topics = querySnapshot.docs.map(doc => ({
     id: doc.id,
-    name: doc.data().name,
+    ...doc.data()
   }));
   return topics;
 }
@@ -41,3 +37,16 @@ export async function fetchWords(userId: string, topicId: string) {
   return words;
 }
 
+export async function updateWord(userId: string, topicId: string, wordId: string, newWord: string, newMeaning: string) {
+  const wordRef = doc(db, `users/${userId}/topics/${topicId}/words/${wordId}`);
+  await updateDoc(wordRef, {
+    word: newWord,
+    meaning: newMeaning,
+  });
+  console.log(`Word updated with ID: ${wordId}`);
+}
+
+export async function deleteWord(userId: string, topicId: string, wordId: string): Promise<void> {
+  const wordDocRef = doc(db, `users/${userId}/topics/${topicId}/words`, wordId);
+  await deleteDoc(wordDocRef);
+}
