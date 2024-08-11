@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar  from '../components/component/navbar'
+import Navbar from '../components/component/navbar'
+import ProtectedRoute from '@/components/component/protectedroute';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,7 @@ export default function RootLayout({
       <body className={`${inter.className} flex flex-col h-screen`}>
         <Navbar />
         <main className="flex-grow overflow-auto">
-          {children}
+          <ProtectedRoute>{children}</ProtectedRoute>
         </main>
       </body>
     </html>
