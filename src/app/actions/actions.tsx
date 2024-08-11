@@ -29,6 +29,11 @@ export async function fetchTopics(userId: string) {
   return topics;
 }
 
+export const deleteTopic = async (userId: string, topicId: string) => {
+  const topicRef = doc(db, 'users', userId, 'topics', topicId);
+  await deleteDoc(topicRef);
+};
+
 export async function fetchWords(userId: string, topicId: string) {
   const wordsRef = collection(db, `users/${userId}/topics/${topicId}/words`);
   const querySnapshot = await getDocs(wordsRef);
