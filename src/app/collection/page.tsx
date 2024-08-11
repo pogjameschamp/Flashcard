@@ -28,6 +28,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from 'next/link';
+import { Trash2 } from "lucide-react";
+import { deleteTopic } from "../actions/actions";
 
 const formSchema = z.object({
   topic: z.string()
@@ -71,6 +73,14 @@ export default function Collection() {
       const updatedTopics = await fetchTopics(user.uid);
       setTopicList(updatedTopics);
       form.reset();
+    }
+  };
+
+  const handleDeleteTopic = async (topicId: string) => {
+    if (user) {
+      await deleteTopic(user.uid, topicId);
+      const updatedTopics = await fetchTopics(user.uid);
+      setTopicList(updatedTopics);
     }
   };
 
@@ -123,12 +133,20 @@ export default function Collection() {
             <CardContent>
               <CardDescription>{topic.description}</CardDescription>
             </CardContent>
-            <CardFooter>
-              <Link className='w-full' href={`/collection/${topic.id}`}>
+            <CardFooter className="flex justify-between">
+              <Link className='flex-grow' href={`/collection/${topic.id}`}>
                 <Button className="w-full">
                   <Check className="mr-2 h-4 w-4" /> Go to Topic
                 </Button>
               </Link>
+              <Button 
+                variant="destructive" 
+                size="icon" 
+                className="ml-2"
+                onClick={() => handleDeleteTopic(topic.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </CardFooter>
           </Card>
         ))}

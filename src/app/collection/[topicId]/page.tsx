@@ -1,5 +1,7 @@
 "use client";
 import { useParams } from 'next/navigation';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../config/firebase-config';
 import { useEffect, useState } from 'react';
 import { fetchWords, addWord } from '../../actions/actions';
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -26,13 +28,14 @@ const formSchema = z.object({
     .max(30, { message: "Word cannot be longer than 30 characters." }),
   meaning: z.string()
     .min(2, { message: "Meaning must be at least 2 characters." })
-    .max(100, { message: "Meaning cannot be longer than 100 characters." }), // Example for meaning length
+    .max(100, { message: "Meaning cannot be longer than 100 characters." }),
 });
 
 const TopicPage = () => {
   const { topicId } = useParams();
   const [user] = useAuthState(auth);
   const [wordList, setWordList] = useState<any[]>([]);
+  const [topicName, setTopicName] = useState<string>("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,6 +54,11 @@ const TopicPage = () => {
         topicId: topicId as string,
       }));
       setWordList(wordsWithMeta);
+  
+      const topicDoc = await getDoc(doc(db, 'users', user.uid, 'topics', topicId as string));
+      if (topicDoc.exists()) {
+        setTopicName(topicDoc.data().name);
+      }
     }
   };
 
@@ -72,7 +80,7 @@ const TopicPage = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-4">Words in this topic:</h2>
+      <h2 className="text-2xl font-bold mb-6">{topicName}</h2>      
       <div className="flex flex-row">
         <div className="w-1/2 pr-4">
           <ul className="space-y-4">
