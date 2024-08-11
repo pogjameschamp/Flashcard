@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { CircleUser, Menu, Package2, Search } from "lucide-react"
+import { CircleUser, Package, Folder } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -12,9 +12,19 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/app/config/firebase-config";
+import { signOut } from "firebase/auth";
 
 const Navbar = () => {
     const [user, loading, error] = useAuthState(auth);
+
+    const handleLogout = () => {
+        signOut(auth).then(() => {
+          // Redirect to login page after logout
+          window.location.href = '/login';
+        }).catch((error) => {
+          console.error("Error signing out: ", error);
+        });
+      };
 
     return (
         <div>
@@ -24,7 +34,7 @@ const Navbar = () => {
                 href="#"
                 className="flex items-center gap-2 text-lg font-semibold md:text-base"
                 >
-                <Package2 className="h-6 w-6" />
+                <Package className="h-6 w-6" />
                 <span className="sr-only">Acme Inc</span>
                 </Link>
                 <Link
@@ -70,9 +80,8 @@ const Navbar = () => {
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>Settings</DropdownMenuItem>
-                    <DropdownMenuItem>Support</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>Logout</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={handleLogout}>Logout</DropdownMenuItem>
                 </DropdownMenuContent>
                 </DropdownMenu>
             </div>
