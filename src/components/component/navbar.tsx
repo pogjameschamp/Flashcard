@@ -17,13 +17,14 @@ import { signOut } from "firebase/auth";
 const Navbar = () => {
     const [user, loading, error] = useAuthState(auth);
 
-    const handleLogout = () => {
-        signOut(auth).then(() => {
-          // Redirect to login page after logout
+    const handleLogout = async () => {
+        try {
+          await signOut(auth);
           window.location.href = '/login';
-        }).catch((error) => {
+        } catch (error) {
           console.error("Error signing out: ", error);
-        });
+          alert("Failed to sign out. Please try again.");
+        }
       };
 
     return (

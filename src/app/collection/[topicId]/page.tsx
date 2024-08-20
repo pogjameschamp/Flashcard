@@ -68,9 +68,14 @@ const TopicPage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (user && topicId) {
-      await addWord(user.uid, topicId as string, values.word, values.meaning);
-      fetchWordsList();
-      form.reset();
+      try {
+        await addWord(user.uid, topicId as string, values.word, values.meaning);
+        await fetchWordsList();
+        form.reset();
+      } catch (error) {
+        console.error("Error adding word: ", error);
+        alert("Failed to add word. Please try again.");
+      }
     }
   };
 

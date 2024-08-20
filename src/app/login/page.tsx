@@ -9,13 +9,13 @@ export default function Login() {
 
     const signInWithGoogle = async () => {
         try {
-            const result = await signInWithPopup(auth, provider);
-            console.log(result);
-            router.push("/")
+          await signInWithPopup(auth, provider);
+          router.push("/");
         } catch (error) {
-            console.error("Error signing in with Google: ", error);
+          console.error("Error signing in with Google: ", error);
+          alert("Failed to sign in. Please try again.");
         }
-    };
+      };
 
     return (
         <div>

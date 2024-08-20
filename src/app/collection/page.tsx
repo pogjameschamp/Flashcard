@@ -69,18 +69,28 @@ export default function Collection() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (user) {
-      await addTopic(user.uid, values.topic, values.description);
-      const updatedTopics = await fetchTopics(user.uid);
-      setTopicList(updatedTopics);
-      form.reset();
+      try {
+        await addTopic(user.uid, values.topic, values.description);
+        const updatedTopics = await fetchTopics(user.uid);
+        setTopicList(updatedTopics);
+        form.reset();
+      } catch (error) {
+        console.error("Error adding topic: ", error);
+        alert("Failed to add topic. Please try again.");
+      }
     }
   };
 
   const handleDeleteTopic = async (topicId: string) => {
     if (user) {
-      await deleteTopic(user.uid, topicId);
-      const updatedTopics = await fetchTopics(user.uid);
-      setTopicList(updatedTopics);
+      try {
+        await deleteTopic(user.uid, topicId);
+        const updatedTopics = await fetchTopics(user.uid);
+        setTopicList(updatedTopics);
+      } catch (error) {
+        console.error("Error deleting topic: ", error);
+        alert("Failed to delete topic. Please try again.");
+      }
     }
   };
 
