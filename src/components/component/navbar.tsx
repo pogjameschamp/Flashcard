@@ -50,6 +50,12 @@ const Navbar = () => {
                 >
                 Collection
                 </Link>
+                <Link
+                href="/collections"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                Browse
+                </Link>
                 {!user ? (
                     <Link
                     href="/login"

@@ -34,3 +34,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+To Do:
+
+[X] Authentification
+[X] Routing
+[X] Different page routes
+[X] Make Navbar
+[X] Add to git
+[X] Find out how to add to collection
+[X] Make new topics into cards on screen
+[X] Make new page once clicking on the topic, on this page you can add new words
+[X] implement shadcn form for topic page
+	-> [X] npm install zod for form
+[] Add ability to see other users collections
+[] Figure out duplicate fetchTopics
+[] Deploy 
+[] Add AI creating cards
+

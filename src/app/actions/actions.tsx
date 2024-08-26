@@ -7,7 +7,6 @@ export async function addTopic(userId: string, topicName: string, description: s
   await addDoc(topicsCollection, { name: topicName, description });
 }
 
-
 export async function addWord(userId: string, topicId: string, word: string, meaning: string) {
   const wordsRef = collection(db, `users/${userId}/topics/${topicId}/words`);
   const docRef = await addDoc(wordsRef, { word, meaning });
@@ -55,3 +54,4 @@ export async function deleteWord(userId: string, topicId: string, wordId: string
   const wordDocRef = doc(db, `users/${userId}/topics/${topicId}/words`, wordId);
   await deleteDoc(wordDocRef);
 }
+

@@ -1,4 +1,5 @@
 "use client";
+
 import { useParams } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase-config';
@@ -11,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress"; // Import Progress component
 import UpdateCardDialog from '@/components/component/updatecard';
 import {
   Form,
@@ -21,6 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { getOpenAIResponse, saveFlashcardsToCollection, parseFlashcards } from '../../actions/openai'; // Adjust the path as necessary
 
 const formSchema = z.object({
   word: z.string()
@@ -36,6 +39,9 @@ const TopicPage = () => {
   const [user] = useAuthState(auth);
   const [wordList, setWordList] = useState<any[]>([]);
   const [topicName, setTopicName] = useState<string>("");
+  const [prompt, setPrompt] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -76,6 +82,36 @@ const TopicPage = () => {
         console.error("Error adding word: ", error);
         alert("Failed to add word. Please try again.");
       }
+    }
+  };
+
+  const handleGenerateFlashcards = async () => {
+    if (user && topicId && prompt.trim()) {
+      try {
+        setIsLoading(true);  // Start loading
+        setProgress(20); // Start progress bar
+
+        const response = await getOpenAIResponse(prompt);
+        console.log("OpenAI Response:", response);
+        setProgress(50); // Update progress
+
+        const flashcards = parseFlashcards(response);
+        setProgress(70); // Update progress
+
+        // Save flashcards to the collection
+        await saveFlashcardsToCollection(flashcards, user.uid, topicId as string);
+        setProgress(100); // Finish progress
+        await fetchWordsList();
+        setPrompt(""); // Clear the prompt input after submission
+      } catch (error) {
+        console.error("Error generating flashcards: ", error);
+        alert("Failed to generate flashcards. Please try again.");
+      } finally {
+        setIsLoading(false);  // Stop loading
+        setProgress(0); // Reset progress bar
+      }
+    } else {
+      alert("Please enter a valid prompt.");
     }
   };
 
@@ -139,6 +175,25 @@ const TopicPage = () => {
               <Button type="submit">Submit Pair</Button>
             </form>
           </Form>
+
+          <div className="mt-8">
+            <h2 className="text-xl font-bold mb-4">Generate Flashcards</h2>
+            <Input
+              placeholder="Enter prompt for generating flashcards"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="mb-4"
+            />
+            <Button onClick={handleGenerateFlashcards} disabled={isLoading}>
+              {isLoading ? "Generating..." : "Generate Flashcards"}
+            </Button>
+
+            {isLoading && (
+              <div className="mt-4">
+                <Progress value={progress} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
