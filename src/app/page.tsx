@@ -33,6 +33,7 @@ export default function Home() {
   const [words, setWords] = useState<Word[]>([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [isChanging, setIsChanging] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -54,17 +55,25 @@ export default function Home() {
   };
 
   const handleNextWord = () => {
-    if (currentWordIndex < words.length - 1) {
-      setCurrentWordIndex(currentWordIndex + 1);
-    } else {
-      setIsFinished(true);
-    }
+    setIsChanging(true);
+    setTimeout(() => {
+      if (currentWordIndex < words.length - 1) {
+        setCurrentWordIndex(currentWordIndex + 1);
+      } else {
+        setIsFinished(true);
+      }
+      setIsChanging(false);
+    }, 300); // Adjust this delay as needed
   };
 
   const handlePreviousWord = () => {
-    if (currentWordIndex > 0) {
-      setCurrentWordIndex(currentWordIndex - 1);
-    }
+    setIsChanging(true);
+    setTimeout(() => {
+      if (currentWordIndex > 0) {
+        setCurrentWordIndex(currentWordIndex - 1);
+      }
+      setIsChanging(false);
+    }, 300); // Adjust this delay as needed
   };
 
   const handleRestart = () => {
@@ -73,6 +82,8 @@ export default function Home() {
   };
 
   return (
+    // min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-purple-100
+    <div className=""> 
       <div className="flex flex-col p-8 h-screen">
         <Select onValueChange={handleTopicSelect}>
           <SelectTrigger className="w-[180px] mb-4">
@@ -87,7 +98,17 @@ export default function Home() {
           </SelectContent>
         </Select>
         
-        {!selectedTopic && (
+        {!selectedTopic && topics.length === 0 && (
+          <div className="flex-grow flex flex-col items-center justify-center">
+            <h2 className="text-2xl font-bold mb-4">Welcome to Flashcards!</h2>
+            <p className="text-lg text-center mb-4">Create a collection to get started!</p>
+            <Link href="/collection">
+              <Button>Create Collection</Button>
+            </Link>
+          </div>
+        )}
+
+        {!selectedTopic && topics.length > 0 && (
           <div className="flex-grow flex flex-col items-center justify-center">
             <h2 className="text-2xl font-bold mb-4">Welcome to Flashcards!</h2>
             <p className="text-lg text-center">Please select a topic to start studying.</p>
@@ -110,10 +131,11 @@ export default function Home() {
               word={words[currentWordIndex].word}
               meaning={words[currentWordIndex].meaning}
               showWord={true}
+              isChanging={isChanging}
             />
             <div className="mt-8 flex space-x-4">
-              <Button onClick={handlePreviousWord} disabled={currentWordIndex === 0}>Previous</Button>
-              <Button onClick={handleNextWord}>
+              <Button onClick={handlePreviousWord} disabled={currentWordIndex === 0 || isChanging}>Previous</Button>
+              <Button onClick={handleNextWord} disabled={isChanging}>
                 {currentWordIndex === words.length - 1 ? "Finish" : "Next"}
               </Button>
             </div>
@@ -127,5 +149,6 @@ export default function Home() {
           </div>
         )}
       </div>
-    );
+    </div>
+  );
 }
