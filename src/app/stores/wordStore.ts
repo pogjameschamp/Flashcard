@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { db } from '../config/firebase-config';
 import { collection, query, getDocs } from 'firebase/firestore';
 
@@ -11,7 +11,6 @@ interface WordsState {
   topics: Topic[];
   fetchTopics: (userId: string) => Promise<Topic[]>;
   setTopicsFromStorage: () => void;
-  
 }
 
 const useWordsStore = create<WordsState>((set) => ({
